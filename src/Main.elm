@@ -12,7 +12,7 @@ module Main exposing (main)
             - The title and text should be vertically and horizontally aligned center and never overflow the container
     - [x] Fix Accessability
     - [x] Validate that password contains at least 1 capital, 1 digit and 1 special character.
-    - [ ] confirmPassword and password fields must match. If not, form should not be submittable.
+    - [x] confirmPassword and password fields must match. If not, form should not be submittable.
     - [ ] Make a show/hide button to display password in cleartext at will.
     - [x] Form should not submit unless all fields are valid.
     - [x] Form should not submit unless terms and condition checkbox is "checked"
