@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Elm App</title>
+  <link rel="stylesheet" href="src/styles.css">
+</head>
+<body>
+  <div id="elm"></div>
+  <script src="elm.js"></script>
+  <script>
+    const app = Elm.Main.init({ node: document.getElementById("elm") });
+  </script>
+</body>
+</html>
