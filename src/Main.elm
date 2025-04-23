@@ -10,8 +10,8 @@ module Main exposing (main)
             - The image should always be 400px in height
             - The person in the photo should always be visible regardless of screen width
             - The title and text should be vertically and horizontally aligned center and never overflow the container
-    - [ ] Fix Accessability
-    - [ ] Validate that password contains at least 1 capital, 1 digit and 1 special character.
+    - [x] Fix Accessability
+    - [x] Validate that password contains at least 1 capital, 1 digit and 1 special character.
     - [ ] confirmPassword and password fields must match. If not, form should not be submittable.
     - [ ] Make a show/hide button to display password in cleartext at will.
     - [x] Form should not submit unless all fields are valid.
@@ -27,6 +27,7 @@ import Html.Attributes as HA
 import Html.Events as Events
 import Process
 import Task
+import Regex exposing (Regex)
 
 
 main : Program Flags Model Msg
@@ -316,13 +317,49 @@ getEmailError email =
         Nothing
 
 
+
+
 getPasswordError : String -> Maybe String
 getPasswordError password =
+    let
+        uppercaseRegex : Regex
+        uppercaseRegex =
+          Maybe.withDefault Regex.never (Regex.fromString "[A-Z]")
+
+        digitRegex : Regex
+        digitRegex =
+          Maybe.withDefault Regex.never (Regex.fromString "[0-9]")
+
+        specialCharRegex : Regex
+        specialCharRegex =
+          Maybe.withDefault Regex.never (Regex.fromString "[^a-zA-Z0-9]")
+        
+        hasUppercase : Bool
+        hasUppercase =
+            Regex.contains uppercaseRegex password
+
+        hasDigit : Bool
+        hasDigit =
+            Regex.contains digitRegex password
+
+        hasSpecialChar : Bool
+        hasSpecialChar =
+            Regex.contains specialCharRegex password
+    in
     if password == "" then
         Nothing
 
     else if String.length password < 6 then
-        Just "Password must be at least 6 chars"
+        Just "Password must be at least 6 characters"
+
+    else if not hasUppercase then
+        Just "Password must contain at least one uppercase letter"
+
+    else if not hasDigit then
+        Just "Password must contain at least one number"
+
+    else if not hasSpecialChar then
+        Just "Password must contain at least one special character"
 
     else
         Nothing
