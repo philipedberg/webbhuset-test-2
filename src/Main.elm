@@ -3,7 +3,7 @@ module Main exposing (main)
 {-| TODO
 
     - [x] Implement a visually pleasing design without sacrificing usability
-    - [ ] Make it responsive and useable on all screen sizes
+    - [x] Make it responsive and useable on all screen sizes
     - [/] Implement the hero in a resposive fashion
             - Feel free to adjust the HTML DOM as needed
             - The image should always take the full width of the screen (or a container)
@@ -17,7 +17,7 @@ module Main exposing (main)
     - [x] Form should not submit unless all fields are valid.
     - [x] Form should not submit unless terms and condition checkbox is "checked"
     - [ ] Add feedback that the app is loading when submit is clicked.
-    - [ ] Refactor code to make it more maintainable and easier to understand.
+    - [x] Refactor code to make it more maintainable and easier to understand.
 
 -}
 

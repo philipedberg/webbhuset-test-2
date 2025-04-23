@@ -79,6 +79,7 @@ body {
     height: 1.25rem;
     width: 1.25rem;
     cursor: pointer;
+    outline-color: var(--color-primary-400);
   }
 }
 
@@ -93,6 +94,7 @@ body {
 }
 
 button {
+  transition: box-shadow 0.2s ease, outline 0.2s ease;
   padding: 1rem 1.5rem;
   background-color: var(--color-primary-400);
   cursor: pointer;
@@ -107,6 +109,11 @@ button {
   }
   &:active {
     box-shadow: none;
+  }
+  &:focus {
+    outline: 2px solid var(--color-primary-400);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px hsl(var(--primary-hue), 36%, 85%);
   }
   &:disabled {
     background-color: var(--color-gray-400);
