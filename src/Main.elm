@@ -13,7 +13,7 @@ module Main exposing (main)
     - [x] Fix Accessability
     - [x] Validate that password contains at least 1 capital, 1 digit and 1 special character.
     - [x] confirmPassword and password fields must match. If not, form should not be submittable.
-    - [ ] Make a show/hide button to display password in cleartext at will.
+    - [x] Make a show/hide button to display password in cleartext at will.
     - [x] Form should not submit unless all fields are valid.
     - [x] Form should not submit unless terms and condition checkbox is "checked"
     - [ ] Add feedback that the app is loading when submit is clicked.
@@ -211,19 +211,22 @@ view_LabeledInput :
 view_LabeledInput { label, value, onInput, inputType, maybeError, maybeToggle } =
     Html.div [ HA.class "labeled-input" ]
         [ Html.text label
-        , Html.input
-            [ HA.value value
-            , Events.onInput onInput
-            , HA.type_ inputType
-            ]
-            []
-        , case maybeToggle of
-            Just { isVisible, onToggle } ->
-                Html.button
-                    [ Events.onClick onToggle ]
-                    [ Html.text (if isVisible then "Hide" else "Show") ]
-            Nothing ->
-                Html.text ""
+        , Html.div [ HA.class "input-wrapper" ]
+        [
+            Html.input
+                [ HA.value value
+                , Events.onInput onInput
+                , HA.type_ inputType
+                ]
+                []
+            , case maybeToggle of
+                Just { isVisible, onToggle } ->
+                    Html.button
+                        [ Events.onClick onToggle, HA.class "show-password-button" ]
+                        [ Html.text (if isVisible then "Hide" else "Show") ]
+                Nothing ->
+                    Html.text ""
+        ]
         , case maybeError of
             Just errorMsg ->
                 Html.div [ HA.class "error-text" ] [ Html.text errorMsg ]

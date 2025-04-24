@@ -5549,33 +5549,43 @@ var $author$project$Main$view_LabeledInput = function (_v0) {
 			[
 				$elm$html$Html$text(label),
 				A2(
-				$elm$html$Html$input,
+				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$value(value),
-						$elm$html$Html$Events$onInput(onInput),
-						$elm$html$Html$Attributes$type_(inputType)
+						$elm$html$Html$Attributes$class('input-wrapper')
 					]),
-				_List_Nil),
-				function () {
-				if (maybeToggle.$ === 'Just') {
-					var isVisible = maybeToggle.a.isVisible;
-					var onToggle = maybeToggle.a.onToggle;
-					return A2(
-						$elm$html$Html$button,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$input,
 						_List_fromArray(
 							[
-								$elm$html$Html$Events$onClick(onToggle)
+								$elm$html$Html$Attributes$value(value),
+								$elm$html$Html$Events$onInput(onInput),
+								$elm$html$Html$Attributes$type_(inputType)
 							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(
-								isVisible ? 'Hide' : 'Show')
-							]));
-				} else {
-					return $elm$html$Html$text('');
-				}
-			}(),
+						_List_Nil),
+						function () {
+						if (maybeToggle.$ === 'Just') {
+							var isVisible = maybeToggle.a.isVisible;
+							var onToggle = maybeToggle.a.onToggle;
+							return A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick(onToggle),
+										$elm$html$Html$Attributes$class('show-password-button')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(
+										isVisible ? 'Hide' : 'Show')
+									]));
+						} else {
+							return $elm$html$Html$text('');
+						}
+					}()
+					])),
 				function () {
 				if (maybeError.$ === 'Just') {
 					var errorMsg = maybeError.a;
