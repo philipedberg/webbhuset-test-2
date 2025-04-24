@@ -5262,7 +5262,7 @@ var $elm$core$Task$perform = F2(
 var $elm$browser$Browser$element = _Browser_element;
 var $author$project$Main$FillForm = {$: 'FillForm'};
 var $author$project$Main$form_Empty = {agreeTerms: false, confirmPassword: '', email: '', firstname: '', lastname: '', password: ''};
-var $author$project$Main$initModel = {form: $author$project$Main$form_Empty, view: $author$project$Main$FillForm};
+var $author$project$Main$initModel = {form: $author$project$Main$form_Empty, showConfirmPassword: false, showPassword: false, view: $author$project$Main$FillForm};
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Main$init = function (flags) {
@@ -5311,6 +5311,7 @@ var $author$project$Main$form_Update = F2(
 					{agreeTerms: bool});
 		}
 	});
+var $elm$core$Basics$not = _Basics_not;
 var $elm$core$Process$sleep = _Process_sleep;
 var $author$project$Main$update = F2(
 	function (msg, model) {
@@ -5338,11 +5339,23 @@ var $author$project$Main$update = F2(
 								return $elm$core$Task$succeed($author$project$Main$GotBackendResponse);
 							},
 							$elm$core$Process$sleep(1000))));
-			default:
+			case 'GotBackendResponse':
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{view: $author$project$Main$SubmitSuccess}),
+					$elm$core$Platform$Cmd$none);
+			case 'TogglePasswordVisibility':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{showPassword: !model.showPassword}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{showConfirmPassword: !model.showConfirmPassword}),
 					$elm$core$Platform$Cmd$none);
 		}
 	});
@@ -5378,6 +5391,8 @@ var $author$project$Main$Lastname = function (a) {
 var $author$project$Main$Password = function (a) {
 	return {$: 'Password', a: a};
 };
+var $author$project$Main$ToggleConfirmPasswordVisibility = {$: 'ToggleConfirmPasswordVisibility'};
+var $author$project$Main$TogglePasswordVisibility = {$: 'TogglePasswordVisibility'};
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$html$Html$Attributes$boolProperty = F2(
@@ -5395,7 +5410,6 @@ var $elm$core$Basics$composeL = F3(
 	});
 var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
 var $elm$core$String$endsWith = _String_endsWith;
-var $elm$core$Basics$not = _Basics_not;
 var $author$project$Main$getEmailError = function (email) {
 	return (email === '') ? $elm$core$Maybe$Nothing : ((!A2($elm$core$String$contains, '@', email)) ? $elm$core$Maybe$Just('Invalid email') : (A2($elm$core$String$endsWith, 'example.com', email) ? $elm$core$Maybe$Just('Email already registered') : $elm$core$Maybe$Nothing));
 };
@@ -5524,6 +5538,7 @@ var $author$project$Main$view_LabeledInput = function (_v0) {
 	var onInput = _v0.onInput;
 	var inputType = _v0.inputType;
 	var maybeError = _v0.maybeError;
+	var maybeToggle = _v0.maybeToggle;
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
@@ -5543,6 +5558,25 @@ var $author$project$Main$view_LabeledInput = function (_v0) {
 					]),
 				_List_Nil),
 				function () {
+				if (maybeToggle.$ === 'Just') {
+					var isVisible = maybeToggle.a.isVisible;
+					var onToggle = maybeToggle.a.onToggle;
+					return A2(
+						$elm$html$Html$button,
+						_List_fromArray(
+							[
+								$elm$html$Html$Events$onClick(onToggle)
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								isVisible ? 'Hide' : 'Show')
+							]));
+				} else {
+					return $elm$html$Html$text('');
+				}
+			}(),
+				function () {
 				if (maybeError.$ === 'Just') {
 					var errorMsg = maybeError.a;
 					return A2(
@@ -5561,195 +5595,203 @@ var $author$project$Main$view_LabeledInput = function (_v0) {
 			}()
 			]));
 };
-var $author$project$Main$view_Form = function (form) {
-	return A2(
-		$elm$html$Html$div,
-		_List_Nil,
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('form')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('form-fields')
-							]),
-						_List_fromArray(
-							[
-								$author$project$Main$view_LabeledInput(
-								{
-									inputType: 'text',
-									label: 'Firstname',
-									maybeError: $elm$core$Maybe$Nothing,
-									onInput: A2($elm$core$Basics$composeL, $author$project$Main$FieldGotInput, $author$project$Main$Firstname),
-									value: form.firstname
-								}),
-								$author$project$Main$view_LabeledInput(
-								{
-									inputType: 'text',
-									label: 'Lastname',
-									maybeError: $elm$core$Maybe$Nothing,
-									onInput: A2($elm$core$Basics$composeL, $author$project$Main$FieldGotInput, $author$project$Main$Lastname),
-									value: form.lastname
-								}),
-								$author$project$Main$view_LabeledInput(
-								{
-									inputType: 'text',
-									label: 'Email',
-									maybeError: $author$project$Main$getEmailError(form.email),
-									onInput: A2($elm$core$Basics$composeL, $author$project$Main$FieldGotInput, $author$project$Main$Email),
-									value: form.email
-								}),
-								$author$project$Main$view_LabeledInput(
-								{
-									inputType: 'password',
-									label: 'Password',
-									maybeError: $author$project$Main$getPasswordError(form.password),
-									onInput: A2($elm$core$Basics$composeL, $author$project$Main$FieldGotInput, $author$project$Main$Password),
-									value: form.password
-								}),
-								$author$project$Main$view_LabeledInput(
-								{
-									inputType: 'password',
-									label: 'Confirm Password',
-									maybeError: $elm$core$Maybe$Nothing,
-									onInput: A2($elm$core$Basics$composeL, $author$project$Main$FieldGotInput, $author$project$Main$ConfirmPassword),
-									value: form.confirmPassword
-								})
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('checkbox')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$input,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$checked(form.agreeTerms),
-										$elm$html$Html$Events$onCheck(
-										A2($elm$core$Basics$composeL, $author$project$Main$FieldGotInput, $author$project$Main$AgreeTerms)),
-										$elm$html$Html$Attributes$type_('checkbox')
-									]),
-								_List_Nil),
-								$elm$html$Html$text('I agree to terms and conditions')
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick($author$project$Main$FormSubmitClicked),
-										$elm$html$Html$Attributes$disabled(
-										!$author$project$Main$isFormValid(form))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Create Account')
-									]))
-							]))
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('unique-selling-points')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$h2,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Lots of features')
-							])),
-						A2(
-						$elm$html$Html$p,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Get access to our full set of features by registering, including but not limited to:')
-							])),
-						A2(
-						$elm$html$Html$ul,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$li,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Lorem ipsum')
-									])),
-								A2(
-								$elm$html$Html$li,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Dolor eveniet')
-									])),
-								A2(
-								$elm$html$Html$li,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Mollitia omnis sequi obcaecati')
-									])),
-								A2(
-								$elm$html$Html$li,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Nobis')
-									])),
-								A2(
-								$elm$html$Html$li,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Nam iure sit earum')
-									])),
-								A2(
-								$elm$html$Html$li,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Perspiciatis accusamus numquam')
-									])),
-								A2(
-								$elm$html$Html$li,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Obcaecati')
-									])),
-								A2(
-								$elm$html$Html$li,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Dolor omnis')
-									]))
-							]))
-					]))
-			]));
-};
+var $author$project$Main$view_Form = F3(
+	function (showPassword, showConfirmPassword, form) {
+		return A2(
+			$elm$html$Html$div,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('form')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('form-fields')
+								]),
+							_List_fromArray(
+								[
+									$author$project$Main$view_LabeledInput(
+									{
+										inputType: 'text',
+										label: 'Firstname',
+										maybeError: $elm$core$Maybe$Nothing,
+										maybeToggle: $elm$core$Maybe$Nothing,
+										onInput: A2($elm$core$Basics$composeL, $author$project$Main$FieldGotInput, $author$project$Main$Firstname),
+										value: form.firstname
+									}),
+									$author$project$Main$view_LabeledInput(
+									{
+										inputType: 'text',
+										label: 'Lastname',
+										maybeError: $elm$core$Maybe$Nothing,
+										maybeToggle: $elm$core$Maybe$Nothing,
+										onInput: A2($elm$core$Basics$composeL, $author$project$Main$FieldGotInput, $author$project$Main$Lastname),
+										value: form.lastname
+									}),
+									$author$project$Main$view_LabeledInput(
+									{
+										inputType: 'text',
+										label: 'Email',
+										maybeError: $author$project$Main$getEmailError(form.email),
+										maybeToggle: $elm$core$Maybe$Nothing,
+										onInput: A2($elm$core$Basics$composeL, $author$project$Main$FieldGotInput, $author$project$Main$Email),
+										value: form.email
+									}),
+									$author$project$Main$view_LabeledInput(
+									{
+										inputType: showPassword ? 'text' : 'password',
+										label: 'Password',
+										maybeError: $author$project$Main$getPasswordError(form.password),
+										maybeToggle: $elm$core$Maybe$Just(
+											{isVisible: showPassword, onToggle: $author$project$Main$TogglePasswordVisibility}),
+										onInput: A2($elm$core$Basics$composeL, $author$project$Main$FieldGotInput, $author$project$Main$Password),
+										value: form.password
+									}),
+									$author$project$Main$view_LabeledInput(
+									{
+										inputType: showConfirmPassword ? 'text' : 'password',
+										label: 'Confirm Password',
+										maybeError: $elm$core$Maybe$Nothing,
+										maybeToggle: $elm$core$Maybe$Just(
+											{isVisible: showConfirmPassword, onToggle: $author$project$Main$ToggleConfirmPasswordVisibility}),
+										onInput: A2($elm$core$Basics$composeL, $author$project$Main$FieldGotInput, $author$project$Main$ConfirmPassword),
+										value: form.confirmPassword
+									})
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('checkbox')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$input,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$checked(form.agreeTerms),
+											$elm$html$Html$Events$onCheck(
+											A2($elm$core$Basics$composeL, $author$project$Main$FieldGotInput, $author$project$Main$AgreeTerms)),
+											$elm$html$Html$Attributes$type_('checkbox')
+										]),
+									_List_Nil),
+									$elm$html$Html$text('I agree to terms and conditions')
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$button,
+									_List_fromArray(
+										[
+											$elm$html$Html$Events$onClick($author$project$Main$FormSubmitClicked),
+											$elm$html$Html$Attributes$disabled(
+											!$author$project$Main$isFormValid(form))
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Create Account')
+										]))
+								]))
+						])),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('unique-selling-points')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$h2,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Lots of features')
+								])),
+							A2(
+							$elm$html$Html$p,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Get access to our full set of features by registering, including but not limited to:')
+								])),
+							A2(
+							$elm$html$Html$ul,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$li,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Lorem ipsum')
+										])),
+									A2(
+									$elm$html$Html$li,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Dolor eveniet')
+										])),
+									A2(
+									$elm$html$Html$li,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Mollitia omnis sequi obcaecati')
+										])),
+									A2(
+									$elm$html$Html$li,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Nobis')
+										])),
+									A2(
+									$elm$html$Html$li,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Nam iure sit earum')
+										])),
+									A2(
+									$elm$html$Html$li,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Perspiciatis accusamus numquam')
+										])),
+									A2(
+									$elm$html$Html$li,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Obcaecati')
+										])),
+									A2(
+									$elm$html$Html$li,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Dolor omnis')
+										]))
+								]))
+						]))
+				]));
+	});
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $author$project$Main$view_Hero = A2(
 	$elm$html$Html$div,
@@ -5806,9 +5848,9 @@ var $author$project$Main$view = function (model) {
 				var _v0 = model.view;
 				switch (_v0.$) {
 					case 'FillForm':
-						return $author$project$Main$view_Form(model.form);
+						return A3($author$project$Main$view_Form, model.showPassword, model.showConfirmPassword, model.form);
 					case 'SendingForm':
-						return $author$project$Main$view_Form(model.form);
+						return A3($author$project$Main$view_Form, model.showPassword, model.showConfirmPassword, model.form);
 					default:
 						return $author$project$Main$view_Success(model);
 				}

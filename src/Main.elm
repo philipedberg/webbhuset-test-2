@@ -44,11 +44,15 @@ type Msg
     = FieldGotInput Field
     | FormSubmitClicked
     | GotBackendResponse
+    | TogglePasswordVisibility
+    | ToggleConfirmPasswordVisibility
 
 
 type alias Model =
     { form : Form
     , view : View
+    , showPassword : Bool
+    , showConfirmPassword : Bool
     }
 
 
@@ -118,6 +122,8 @@ initModel : Model
 initModel =
     { form = form_Empty
     , view = FillForm
+    , showPassword = False
+    , showConfirmPassword = False
     }
 
 
@@ -152,6 +158,12 @@ update msg model =
             ( { model | view = SubmitSuccess }
             , Cmd.none
             )
+        
+        TogglePasswordVisibility ->
+            ( { model | showPassword = not model.showPassword }, Cmd.none )
+
+        ToggleConfirmPasswordVisibility ->
+            ( { model | showConfirmPassword = not model.showConfirmPassword }, Cmd.none )
 
 
 view : Model -> Html Msg
@@ -162,10 +174,10 @@ view model =
             [view_Hero
             , case model.view of
                 FillForm ->
-                    view_Form model.form
+                    view_Form model.showPassword model.showConfirmPassword model.form
 
                 SendingForm ->
-                    view_Form model.form
+                    view_Form model.showPassword model.showConfirmPassword model.form
 
                 SubmitSuccess ->
                     view_Success model
@@ -193,9 +205,10 @@ view_LabeledInput :
     , onInput : String -> msg
     , inputType : String
     , maybeError : Maybe String
+    , maybeToggle : Maybe { isVisible : Bool, onToggle : msg }
     }
     -> Html msg
-view_LabeledInput { label, value, onInput, inputType, maybeError } =
+view_LabeledInput { label, value, onInput, inputType, maybeError, maybeToggle } =
     Html.div [ HA.class "labeled-input" ]
         [ Html.text label
         , Html.input
@@ -204,17 +217,23 @@ view_LabeledInput { label, value, onInput, inputType, maybeError } =
             , HA.type_ inputType
             ]
             []
+        , case maybeToggle of
+            Just { isVisible, onToggle } ->
+                Html.button
+                    [ Events.onClick onToggle ]
+                    [ Html.text (if isVisible then "Hide" else "Show") ]
+            Nothing ->
+                Html.text ""
         , case maybeError of
             Just errorMsg ->
                 Html.div [ HA.class "error-text" ] [ Html.text errorMsg ]
-
             Nothing ->
                 Html.text ""
         ]
 
 
-view_Form : Form -> Html Msg
-view_Form form =
+view_Form : Bool -> Bool -> Form -> Html Msg
+view_Form showPassword showConfirmPassword form =
     Html.div []
         [ Html.div [ HA.class "form" ]
             [ Html.div [ HA.class "form-fields" ]
@@ -224,6 +243,7 @@ view_Form form =
                     , onInput = FieldGotInput << Firstname
                     , inputType = "text"
                     , maybeError = Nothing
+                    , maybeToggle = Nothing
                     }
                 , view_LabeledInput
                     { label = "Lastname"
@@ -231,6 +251,7 @@ view_Form form =
                     , onInput = FieldGotInput << Lastname
                     , inputType = "text"
                     , maybeError = Nothing
+                    , maybeToggle = Nothing
                     }
                 , view_LabeledInput
                     { label = "Email"
@@ -238,20 +259,23 @@ view_Form form =
                     , onInput = FieldGotInput << Email
                     , inputType = "text"
                     , maybeError = getEmailError form.email
+                    , maybeToggle = Nothing
                     }
                 , view_LabeledInput
                     { label = "Password"
                     , value = form.password
                     , onInput = FieldGotInput << Password
-                    , inputType = "password"
+                    , inputType = if showPassword then "text" else "password"
                     , maybeError = getPasswordError form.password
+                    , maybeToggle = Just { isVisible = showPassword, onToggle = TogglePasswordVisibility }
                     }
                 , view_LabeledInput
                     { label = "Confirm Password"
                     , value = form.confirmPassword
                     , onInput = FieldGotInput << ConfirmPassword
-                    , inputType = "password"
+                    , inputType = if showConfirmPassword then "text" else "password"
                     , maybeError = Nothing
+                    , maybeToggle = Just { isVisible = showConfirmPassword, onToggle = ToggleConfirmPasswordVisibility }
                     }
                 ]
             , Html.div
