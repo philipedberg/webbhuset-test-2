@@ -16,7 +16,7 @@ module Main exposing (main)
     - [x] Make a show/hide button to display password in cleartext at will.
     - [x] Form should not submit unless all fields are valid.
     - [x] Form should not submit unless terms and condition checkbox is "checked"
-    - [ ] Add feedback that the app is loading when submit is clicked.
+    - [x] Add feedback that the app is loading when submit is clicked.
     - [x] Refactor code to make it more maintainable and easier to understand.
 
 -}
@@ -149,7 +149,7 @@ update msg model =
 
         FormSubmitClicked ->
             ( { model | view = SendingForm }
-            , Process.sleep 1000
+            , Process.sleep 3000
                 |> Task.andThen (\_ -> Task.succeed GotBackendResponse)
                 |> Task.perform identity
             )
@@ -177,7 +177,7 @@ view model =
                     view_Form model.showPassword model.showConfirmPassword model.form
 
                 SendingForm ->
-                    view_Form model.showPassword model.showConfirmPassword model.form
+                    view_Loading
 
                 SubmitSuccess ->
                     view_Success model
@@ -320,6 +320,12 @@ view_Form showPassword showConfirmPassword form =
             ]
         ]
 
+view_Loading : Html Msg
+view_Loading =
+    Html.div [ HA.class "loading-screen" ]
+        [ Html.p [] [ Html.text "Creating your account, please wait..." ]
+        , Html.div [ HA.class "spinner" ] []
+        ]
 
 view_Success : Model -> Html msg
 view_Success model =

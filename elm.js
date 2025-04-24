@@ -5338,7 +5338,7 @@ var $author$project$Main$update = F2(
 							function (_v1) {
 								return $elm$core$Task$succeed($author$project$Main$GotBackendResponse);
 							},
-							$elm$core$Process$sleep(1000))));
+							$elm$core$Process$sleep(3000))));
 			case 'GotBackendResponse':
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -5835,6 +5835,29 @@ var $author$project$Main$view_Hero = A2(
 						]))
 				]))
 		]));
+var $author$project$Main$view_Loading = A2(
+	$elm$html$Html$div,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('loading-screen')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$p,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Creating your account, please wait...')
+				])),
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('spinner')
+				]),
+			_List_Nil)
+		]));
 var $author$project$Main$view_Success = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -5860,7 +5883,7 @@ var $author$project$Main$view = function (model) {
 					case 'FillForm':
 						return A3($author$project$Main$view_Form, model.showPassword, model.showConfirmPassword, model.form);
 					case 'SendingForm':
-						return A3($author$project$Main$view_Form, model.showPassword, model.showConfirmPassword, model.form);
+						return $author$project$Main$view_Loading;
 					default:
 						return $author$project$Main$view_Success(model);
 				}
