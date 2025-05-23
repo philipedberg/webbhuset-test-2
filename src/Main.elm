@@ -169,9 +169,9 @@ update msg model =
 view : Model -> Html Msg
 view model =
     Html.div [ HA.class "container" ]
-
             -- [ Html.node "style" [] [ Html.text css ]
-            [view_Hero
+            -- , view_Hero
+            [ view_Hero
             , case model.view of
                 FillForm ->
                     view_Form model.showPassword model.showConfirmPassword model.form
